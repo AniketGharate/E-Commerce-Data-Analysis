@@ -1,0 +1,109 @@
+import numpy as np
+import pandas as pd
+
+customers = pd.read_csv(("D:\\Python\\PythonProjectNew\\PythonProject\\CSV_s1\\customers.csv"),names = ('custno','firstname','lastname','gender','age','profession','contactNo','emailId','city','state','isActive','createdDate datetime','UpdatedDate datetime'))
+products = pd.read_csv(("D:\\Python\\PythonProjectNew\\PythonProject\\CSV_s1\\products.csv"),names = ('productno','productName','Description','isActive','createdDate datetime','UpdatedDate datetime'))
+transactions = pd.read_csv(("D:\\Python\\PythonProjectNew\\PythonProject\\CSV_s1\\transactions.csv"),names = ('txnno','txndate','custno','amount double','productno','spendby'))
+
+#concatination of 3 dataframes with axis=1
+# DataFrame = pd.concat([customers,products,transactions],axis=1)
+# print(DataFrame)
+#converting modified df into excel
+# DataFrame = DataFrame.to_excel("D:\\Python\\PythonProjectNew\\PythonProject\\Dataframe.xlsx")
+
+#merging of products and transactions because of the same column name which is productno
+con = pd.merge(products,transactions,on = 'productno')
+#merging of customers and con because of the same column name which is custno
+mer = pd.merge(customers,con,how='outer',on='custno')
+#print(mer)
+
+
+#dropping null and duplicates
+drop = mer.dropna()
+drop_d = drop.drop_duplicates()
+NewDF = drop_d
+# print(NewDF)
+
+
+#final dataframe after cleaning process
+# NewDF = drop_d.to_excel("D:\\Python\\PythonProjectNew\\PythonProject\\NewDF.xlsx")
+
+#Display first 5 records
+print(NewDF.head(5))
+
+
+#who purchased more than 3 products
+
+x = NewDF[['firstname','lastname']].value_counts().loc[lambda x: x>3]
+#print(x)
+list = x.index.tolist()
+for i in list:
+    a = " ".join(i)
+    print(a)
+
+
+#Display top 5 most demanded products
+print(NewDF["productno"].value_counts().head(5))
+
+
+#Display top 5 transactions amount
+x = NewDF['amount double'].nlargest(n=5)
+print(x)
+
+
+#Display distinct professions
+y= NewDF['profession'].unique()
+print(y)
+
+
+
+#Display highest age
+z = NewDF['age'].max()
+print(z)
+
+
+#Display custno, gender, age, profession, contactno, productno, productName, txndate, spendby, amount
+a = NewDF[["custno","gender","age","profession","contactNo","productno","productName","txndate","spendby","amount double"]]
+b = a[a['custno']==923]
+print(b)
+
+
+#Load all three PSV (pipe separated values) dataset
+customers1 = pd.read_csv(("D:\\Python\\PythonProjectNew\\PythonProject\\PSV_s2\\customers.txt"),skiprows=0,sep='|',names = ('custno','firstname','lastname','gender','age','profession','contactNo','emailId','city','state','isActive','createdDate datetime','UpdatedDate datetime'))
+products1 = pd.read_csv(("D:\\Python\\PythonProjectNew\\PythonProject\\PSV_s2\\products.txt"),skiprows=0,sep='|',names = ('productno','productName','Description','isActive','createdDate datetime','UpdatedDate datetime'))
+transactions1 = pd.read_csv(("D:\\Python\\PythonProjectNew\\PythonProject\\PSV_s2\\transactions.txt"),skiprows=0,sep='|',names = ('txnno','txndate','custno','amount double','productno','spendby'))
+
+PSV = pd.concat([customers1,products1,transactions1],axis=1)
+print(PSV.head(5))
+
+#exporting to excel
+# DataFrame_PSV = PSV.to_excel("D:\\Python\\PythonProjectNew\\PythonProject\\Dataframe_PSV.xlsx")
+
+
+
+# Load all three JSON datasets
+customers2 = pd.read_json("D:\\Python\\PythonProjectNew\\PythonProject\\JSON_s3\\customers.json",lines=True)
+products2 = pd.read_json("D:\\Python\\PythonProjectNew\\PythonProject\\JSON_s3\\products.json",lines=True)
+transactions2 = pd.read_json("D:\\Python\\PythonProjectNew\\PythonProject\\JSON_s3\\transactions.json",lines=True)
+
+JSON = pd.concat([customers2,products2,transactions2],axis=1)
+print(JSON.head(5))
+
+#exporting to excel
+# DataFrame_JSON = JSON.to_excel("D:\\Python\\PythonProjectNew\\PythonProject\\Dataframe_JSON.xlsx")
+
+
+
+
+#Load all three XML datasets
+customers3 = pd.read_xml("D:\\Python\\PythonProjectNew\\PythonProject\\XML_s4\\customers.xml")
+products3 = pd.read_xml("D:\\Python\\PythonProjectNew\\PythonProject\\XML_s4\\products.xml")
+transactions3 = pd.read_xml("D:\\Python\\PythonProjectNew\\PythonProject\\XML_s4\\transactions.xml")
+
+# print(customers3)
+XML = pd.concat([customers3,products3,transactions3],axis=1)
+print(XML.head(5))
+
+#exporting to excel
+#DataFrame_XML = XML.to_excel("D:\\Python\\PythonProjectNew\\PythonProject\\Dataframe_XML.xlsx")
+
